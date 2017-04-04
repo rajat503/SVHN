@@ -49,19 +49,20 @@ h_fc1 = tf.nn.relu(tf.matmul(h_pool4_flat, W_fc1) + b_fc1)
 
 keep_prob = tf.placeholder(tf.float32)
 h_fc1_drop = tf.nn.dropout(h_fc1, keep_prob)
-
-W_fc2 = weight_variable([1024, 1024])
-b_fc2 = bias_variable([1024])
-h_fc2 = tf.nn.relu(tf.matmul(h_fc1_drop, W_fc2) + b_fc2)
-h_fc2_drop = tf.nn.dropout(h_fc2, keep_prob)
+#
+# W_fc2 = weight_variable([1024, 1024])
+# b_fc2 = bias_variable([1024])
+# h_fc2 = tf.nn.relu(tf.matmul(h_fc1_drop, W_fc2) + b_fc2)
+# h_fc2_drop = tf.nn.dropout(h_fc2, keep_prob)
 
 W_fc3 = weight_variable([1024, 1024])
 b_fc3 = bias_variable([1024])
-h_fc3 = tf.nn.relu(tf.matmul(h_fc2_drop, W_fc3) + b_fc3)
+h_fc3 = tf.nn.relu(tf.matmul(h_fc1_drop, W_fc3) + b_fc3)
+h_fc3_drop = tf.nn.dropout(h_fc3, keep_prob)
 
 W_fc4 = weight_variable([1024, 5])
 b_fc4 = bias_variable([5])
-y_conv=tf.nn.softmax(tf.matmul(h_fc3, W_fc4) + b_fc4)
+y_conv=tf.nn.softmax(tf.matmul(h_fc3_drop, W_fc4) + b_fc4)
 
 cross_entropy = tf.reduce_mean(-tf.reduce_sum(y_*tf.log(tf.clip_by_value(y_conv,1e-10,1.0)), reduction_indices=[1]))
 
@@ -72,8 +73,8 @@ accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 
 sess.run(tf.global_variables_initializer())
 
-X = np.load('cropped_images')
-Y = np.load('one_hot_sequence_len')
+X = np.load('dump/cropped_images')
+Y = np.load('dump/one_hot_sequence_len')
 
 train_data_X = X[:30000]
 train_data_Y = Y[:30000]
